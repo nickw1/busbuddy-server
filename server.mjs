@@ -59,6 +59,26 @@ app.get('/working/find', async(req, res) => {
     }
 });
 
+app.get('/working/:analysed_block_ref', async(req, res) => {
+
+    try {
+        const run_days = req.query.run_days || 'Mo,Tu,We,Th,Fr';
+        const dbres = await db.query("SELECT * FROM journeys WHERE analysed_block_ref=$1 ORDER BY deptime", [req.params.analysed_block_ref]);
+        res.json(dbres.rows);
+    } catch(e) {
+        if (e.routine == "DateTimeParseError") {
+            res.status(400).json({
+                "error":"Invalid time format for deptime"
+            });
+        } else {
+            res.status(500).json({
+                code: e.code,
+                errorType: e.routine
+            });
+        }
+    }
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}.`);
