@@ -17,8 +17,9 @@ let lastRequestTime = 0;
 app.get('/live', async(req, res) => {
     const time = Date.now();
     const timePassed = time - lastRequestTime;
+    const bbox = req.query.bbox || "-1.5,50.88,-1.3,50.95";
     if(timePassed > 5000) {
-        const [ minLng, minLat, maxLng, maxLat ] = req.query.bbox.split(',');
+        const [ minLng, minLat, maxLng, maxLat ] = bbox.split(',');
         const result = await bods.fetchBusLocationDatafeed({
             boundingBox: createBoundingBox(minLat, maxLat, minLng, maxLng) 
         });
